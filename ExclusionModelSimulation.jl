@@ -276,7 +276,7 @@ YLENGTH = 50
 PROBABILTYOFMOVE = 1.0
 PROBABILTYOFPROLIFERATION = 1.0
 TIMEOFSIMULATION = 500
-NUMBEROFSIMULATIONS = 4
+NUMBEROFSIMULATIONS = 10
 
 #Constants for initial conditions
 H = 50
@@ -305,14 +305,14 @@ end#for
 =#
 simGrid = createBlock(0,2*H, 1000, simGrid,xAxisValues)
 center=-100
-simGrid = createBlock(center,H, Int(round(3*YLENGTH/4)), simGrid,xAxisValues)
+simGrid = createBlock(center,H, 1000, simGrid,xAxisValues)
 #Heat equation. Will have to be manually changed to match the initial conditions and simulation behaviour
 T=TIMEOFSIMULATION
-C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T))) + 3/4*0.5*(erf((H/2-(x-center))/sqrt(4*D*T))+erf((H/2+(x-center))/sqrt(4*D*T)));
+C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T))) + 0.5*(erf((H/2-(x-center))/sqrt(4*D*T))+erf((H/2+(x-center))/sqrt(4*D*T)));
 
 #Calculate average densities as function of space.
 densities = calculateDensities(StochasticExclusionWalkAverage([XLENGTH, YLENGTH], TIMEOFSIMULATION, simGrid, NUMBEROFSIMULATIONS, PROBABILTYOFMOVE))
-
+println("Calculations Completed")
 #||||----PLOTS----||||#
 myPlot = scatter(xAxisValues,densities,mc=:blue,msc=:match,label="Stochastic")
 myPlot=plot!(C, -XLENGTH/2:XLENGTH/2-1,lw=4,lc=:red,ls=:dash,label="Exact",xlabel="x",ylabel="C(x,t), ⟨ C(x,t) ⟩",xlims=(-XLENGTH/2,XLENGTH/2),ylims=(0,1))
