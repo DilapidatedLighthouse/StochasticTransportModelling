@@ -294,26 +294,19 @@ xAxisValues = [((-XLENGTH/2):((XLENGTH/2)-1))...]
 
 #Initialise grid with agents
 simGrid = zeros(XLENGTH,YLENGTH)
-#=Place vertical block of agents in center of grid with width 2*H
-for i in 1:XLENGTH
-    if(abs(xAxisValues[i])<=H)
-        for j in 1:YLENGTH
-            simGrid[i,j]=1.0
-        end#for
-    end#if
-end#for
-=#
+
 simGrid = createBlock(0,2*H, 1000, simGrid,xAxisValues)
 center=-100
-simGrid = createBlock(center,H, 1000, simGrid,xAxisValues)
+#simGrid = createBlock(center,H, 1000, simGrid,xAxisValues)
 #Heat equation. Will have to be manually changed to match the initial conditions and simulation behaviour
 T=TIMEOFSIMULATION
-C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T))) + 0.5*(erf((H/2-(x-center))/sqrt(4*D*T))+erf((H/2+(x-center))/sqrt(4*D*T)));
+C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T)));
+#C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T))) + 0.5*(erf((H/2-(x-center))/sqrt(4*D*T))+erf((H/2+(x-center))/sqrt(4*D*T)));
 
 #Calculate average densities as function of space.
 densities = calculateDensities(StochasticExclusionWalkAverage([XLENGTH, YLENGTH], TIMEOFSIMULATION, simGrid, NUMBEROFSIMULATIONS, PROBABILTYOFMOVE))
 println("Calculations Completed")
 #||||----PLOTS----||||#
-myPlot = scatter(xAxisValues,densities,mc=:blue,msc=:match,label="Stochastic")
-myPlot=plot!(C, -XLENGTH/2:XLENGTH/2-1,lw=4,lc=:red,ls=:dash,label="Exact",xlabel="x",ylabel="C(x,t), ⟨ C(x,t) ⟩",xlims=(-XLENGTH/2,XLENGTH/2),ylims=(0,1))
+myPlot = scatter(xAxisValues,densities,mc=:black,msc=:match,label="Stochastic")
+myPlot=plot!(C, -XLENGTH/2:XLENGTH/2-1,lw=4,lc=:green,ls=:dash,label="Exact",xlabel="x",ylabel="C(x,500)",xlims=(-XLENGTH/2,XLENGTH/2),ylims=(0,1),framestyle=:box)
 display(myPlot)
