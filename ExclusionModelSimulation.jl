@@ -1,5 +1,6 @@
 #TO DO:
-#   *Move the action at each timeStep into its own function.
+#   *Add option for bias to movement
+#   *Make the plot prettier
 
 
 using Plots, SpecialFunctions, Random
@@ -14,7 +15,7 @@ gr() #A graphical thing? I need to look it up
 #numSimulations is the number of simulations
 #probMovement is the probabilty that an agent will try to move if given the chance 
 #the nullVariable is so the proliferation probability doesnt have to be removed when switching between functions
-function StochasticExclusionWalkAverage(lengths, totalTime, simGrid, numSimultaions, probMovement, nullVariable = "")
+function StochasticExclusionWalkAverage(lengths, totalTime, simGrid, numSimultaions, probMovement, biases = [1,2,3,4], nullVariable = "")
     totalAgents = sum(simGrid)
     integerTime = Int(totalTime)
     sumGrid = zeros(lengths...)#The result of each simulation will be added to this variable so it can be averaged later
@@ -41,7 +42,8 @@ function StochasticExclusionWalkAverage(lengths, totalTime, simGrid, numSimultai
                     moveQuery = rand(1)[1]
                     if(moveQuery <= probMovement)
                         #decide on direction. 1: up 2: right 3:down 4:left
-                        moveDirection = rand(1:4)
+                        randMoveIndex = rand(1:length(biases))
+                        moveDirection = biases[randMoveIndex]
                     
                         #Move the agent
                         tempGrid = attemptActionWithDirection(moveDirection,tempGrid,randCoordinates, moveAgent)
@@ -246,7 +248,7 @@ XLENGTH = 500
 YLENGTH = 50
 PROBABILTYOFMOVE = 1.0
 PROBABILTYOFPROLIFERATION = 1.0
-TIMEOFSIMULATION = 400
+TIMEOFSIMULATION = 200
 NUMBEROFSIMULATIONS = 1
 
 #Constants for initial conditions
@@ -279,7 +281,7 @@ T=TIMEOFSIMULATION
 C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T)));
 
 #Calculate average densities as function of space.
-densities = calculateDensities(StochasticExclusionWalkAverageWithProliferation([XLENGTH, YLENGTH], TIMEOFSIMULATION, simGrid, NUMBEROFSIMULATIONS, PROBABILTYOFMOVE, PROBABILTYOFPROLIFERATION))
+densities = calculateDensities(StochasticExclusionWalkAverage([XLENGTH, YLENGTH], TIMEOFSIMULATION, simGrid, NUMBEROFSIMULATIONS, PROBABILTYOFMOVE))
 
 #||||----PLOTS----||||#
 myPlot = scatter(xAxisValues,densities,mc=:blue,msc=:match,label="Stochastic")
