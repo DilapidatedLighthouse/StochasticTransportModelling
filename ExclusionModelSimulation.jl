@@ -241,6 +241,33 @@ function calculateDensities(simGrid)
 
 end#function
 
+
+#Used for setting up initial conditions. Will create a solid block of agents on grid 'simgGrid', centered at 'center', with width 'width' and height 'height'.
+#xAxisValues is an array containing the position of each column of the grid in cartesian space.
+function createBlock(center, width, height, simGrid, xAxisValues)
+
+    #ensure the height of the block is at most the height of the grid
+    if(height > size(simGrid,2))
+        height = size(simGrid,2)
+    end#if
+    
+    #ensure the width of the block is at most the width of the grid. (That'd be a borring simulation, but you do you.)
+    if(width > size(simGrid,1))
+        width = size(simGrid,1)
+    end#if
+
+    #place the block
+    for i in axes(simGrid,1)
+        if(abs(xAxisValues[i]-center) <= width/2)
+            for j in 1:height
+                simGrid[i,j]=1.0
+            end#for
+        end#if
+    end#for
+    
+    return simGrid
+end#function
+
 #||||----VARIABLES----||||#
 
 #Declaring variables for simulation
@@ -248,8 +275,8 @@ XLENGTH = 500
 YLENGTH = 50
 PROBABILTYOFMOVE = 1.0
 PROBABILTYOFPROLIFERATION = 1.0
-TIMEOFSIMULATION = 200
-NUMBEROFSIMULATIONS = 1
+TIMEOFSIMULATION = 400
+NUMBEROFSIMULATIONS = 4
 
 #Constants for initial conditions
 H = 50
@@ -267,7 +294,7 @@ xAxisValues = [((-XLENGTH/2):((XLENGTH/2)-1))...]
 
 #Initialise grid with agents
 simGrid = zeros(XLENGTH,YLENGTH)
-#Place vertical block of agents in center of grid with width 2*H
+#=Place vertical block of agents in center of grid with width 2*H
 for i in 1:XLENGTH
     if(abs(xAxisValues[i])<=H)
         for j in 1:YLENGTH
@@ -275,7 +302,9 @@ for i in 1:XLENGTH
         end#for
     end#if
 end#for
-
+=#
+simGrid = createBlock(0,2*H, 1000, simGrid,xAxisValues)
+simGrid = createBlock(-100,H, Int(round(3*YLENGTH/4)), simGrid,xAxisValues)
 #Heat equation
 T=TIMEOFSIMULATION
 C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T)));
