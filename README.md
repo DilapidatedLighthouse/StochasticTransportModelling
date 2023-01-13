@@ -1,2 +1,2 @@
-# StochasticTransportModelling
-Code written for ASMSI 2023 class Stochastic Transport Modelling
+# Stochastic Transport Modelling
+This repository contains code written for the class Stochastic Transport Modelling at the 2023 AMSI Summer School.
