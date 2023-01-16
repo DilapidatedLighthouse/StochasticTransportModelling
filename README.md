@@ -2,9 +2,8 @@
 This repository contains code written for the class Stochastic Transport Modelling at the 2023 AMSI Summer School. 
 
 ## ExclusionModelSimulation.jl
-This script runs simulations for random walks on a grid where individual elements cannot occupy the same node. There is also the option to allow the agents to multiply with a certain frequency. The output is a graph like this:
+This script runs simulations for random walks on a grid where individual elements cannot occupy the same node. There is also the option to allow the agents to multiply with a certain frequency. The average density per grid column is again averaged over several simulations and the result is graphed:
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/122573155/212211146-5f75198c-ad9b-472e-b7ce-663b81a87771.svg"/>
+  <img src="https://user-images.githubusercontent.com/122573155/212587057-dbd8f928-4178-4ece-8ddd-a342c0b82fed.svg"/>
 </p>
-
