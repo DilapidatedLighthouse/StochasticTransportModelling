@@ -1,6 +1,5 @@
 #TO DO:
 #   *Add option for bias to movement
-#   *Make the plot prettier
 
 
 using Plots, SpecialFunctions, Random
@@ -296,13 +295,13 @@ xAxisValues = [((-XLENGTH/2):((XLENGTH/2)-1))...]
 simGrid = zeros(XLENGTH,YLENGTH)
 
 simGrid = createBlock(0,2*H, 1000, simGrid,xAxisValues)
-center=-100
-simGrid = createBlock(center,H, 1000, simGrid,xAxisValues)
+center=-150
+simGrid = createBlock(center,2*H, 1000, simGrid,xAxisValues)
 #Heat equation. Will have to be manually changed to match the initial conditions and simulation behaviour
 T=TIMEOFSIMULATION
 #C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T)));
 #C(x)= 0.5*(erf((H/2-(x-center))/sqrt(4*D*T))+erf((H/2+(x-center))/sqrt(4*D*T)));
-C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T))) + 0.5*(erf((H/2-(x-center))/sqrt(4*D*T))+erf((H/2+(x-center))/sqrt(4*D*T)));
+C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T))) + 0.5*(erf((H-(x-center))/sqrt(4*D*T))+erf((H+(x-center))/sqrt(4*D*T)));
 
 #Calculate average densities as function of space.
 densities = calculateDensities(StochasticExclusionWalkAverage([XLENGTH, YLENGTH], TIMEOFSIMULATION, simGrid, NUMBEROFSIMULATIONS, PROBABILTYOFMOVE))
