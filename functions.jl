@@ -258,3 +258,31 @@ function createBlock(center, width, height, simGrid, xAxisValues)
     
     return simGrid
 end#function
+
+function createBlockEven(center, width, height, simGrid, xAxisValues)
+
+    #ensure the height of the block is at most the height of the grid
+    if(height > size(simGrid,2))
+        height = size(simGrid,2)
+    end#if
+    
+    #ensure the width of the block is at most the width of the grid. (That'd be a borring simulation, but you do you.)
+    if(width > size(simGrid,1))
+        width = size(simGrid,1)
+    end#if
+
+    #place the block
+    for i in axes(simGrid,1)
+        if(abs(xAxisValues[i]-center) <= width/2)
+            for j in axes(simGrid,2)
+                
+                if(j%(round(size(simGrid,2)/height))==0)
+                    simGrid[i,j]=1.0
+                end#if
+            end#for
+            
+        end#if
+    end#for
+    
+    return simGrid
+end#function

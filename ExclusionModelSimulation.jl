@@ -15,7 +15,7 @@ XLENGTH = 500
 YLENGTH = 50
 PROBABILTYOFMOVE = 1.0
 PROBABILTYOFPROLIFERATION = 1.0
-TIMEOFSIMULATION = 2000
+TIMEOFSIMULATION = 0
 NUMBEROFSIMULATIONS = 1
 
 #Constants for initial conditions
@@ -34,12 +34,12 @@ simGrid = zeros(XLENGTH,YLENGTH)
 
 simGrid = createBlock(0,2*H, 1000, simGrid,xAxisValues)
 center=-150
-simGrid = createBlock(center,2*H, 1000, simGrid,xAxisValues)
+simGrid = createBlockEven(center,2*H, Int(round(YLENGTH/2)), simGrid,xAxisValues)
 #Heat equation. Will have to be manually changed to match the initial conditions and simulation behaviour
 T=TIMEOFSIMULATION
 #C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T)));
-#C(x)= 0.5*(erf((H/2-(x-center))/sqrt(4*D*T))+erf((H/2+(x-center))/sqrt(4*D*T)));
-C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T))) + 0.5*(erf((H-(x-center))/sqrt(4*D*T))+erf((H+(x-center))/sqrt(4*D*T)));
+#C(x)= 0.5*(erf((H-(x-center))/sqrt(4*D*T))+erf((H+(x-center))/sqrt(4*D*T)));
+C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T))) + 0.25*(erf((H-(x-center))/sqrt(4*D*T))+erf((H+(x-center))/sqrt(4*D*T)));
 
 #Calculate average densities as function of space.
 densities = calculateDensities(StochasticExclusionWalkAverage([XLENGTH, YLENGTH], TIMEOFSIMULATION, simGrid, NUMBEROFSIMULATIONS, PROBABILTYOFMOVE))
