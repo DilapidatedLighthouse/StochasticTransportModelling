@@ -5,7 +5,7 @@
 
 #Personal Additions
 *.svg
-
+ClassFiles/
 
 # User-specific files
 *.rsuser
