@@ -351,7 +351,7 @@ function AdvectionDiffusionFunction!(du, u, parameters, t)
     N = Int(N)
     #Setting up numeric scheme for other derivatives
     for i in 2:N-1
-        du[i] = D*(u[i+1]-2*u[i]+u[i-1])/dx^2 - (v/(2*dx))*(u[i+1]-u[i-1])
+        du[i] = D*(u[i+1]-2*u[i]+u[i-1])/dx^2 - (v*(1-2*u[i])/(2*dx))*(u[i+1]-u[i-1])
     end#for
 
     du[1]=0.0
