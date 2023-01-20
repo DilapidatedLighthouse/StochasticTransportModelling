@@ -1,4 +1,4 @@
-#||||----FUNCTIONS----||||#
+#||||----STOCHASTIC PROCESSES----||||#
 
 #Meat and bones. Runs simulations of cells moving on a grid and averages the results.
 #Lengths is an array of length n specifying the dimensions of the grid.
@@ -285,4 +285,59 @@ function createBlockEven(center, width, height, simGrid, xAxisValues)
     end#for
     
     return simGrid
+end#function
+
+
+
+#||||----PDE Solver----||||#
+
+
+#Solves a DE problem and generates a matrix of solution values with the time on one access and the x position on the other
+#Requires the existence of a list of zeros "numericSolutions" in the scope in which the function is called.
+#Paramters is an array of variables according to the needs of the ODEFunction
+#C0 is the initial conditions for the DE
+#ODEFunction is a function that defines the DE to be solved.
+#Note: ODEFunction will not be called directly but ny ODEProblem from the DifferentialEquations package
+function PDESolver(parameters, C0, Times,ODEFunction)
+    timeSpan = (0.0, maximum(Times))
+    problem = ODEProblem(ODEFunction,C0,timeSpan,parameters) #create a 'problem' for use with DifferentialEquations package
+    
+    solution = solve(problem,saveat=Times)
+    
+    for i in 1:length(solution[:,])
+        numericSolutions[i,:]=solution[:,i]
+    end#for
+
+    return numericSolutions
+    
+end#function
+
+
+#A possible ODEFunction for PDESolver. Diffusion equation
+#Should have parameters = [step-size, Number of steps(along x direction), Diffusion constant] 
+function DiffusionFunction!(du, u, parameters, t)
+    dx,N,D = parameters #unpacking into variables
+    #Setting up numeric scheme for other derivatives
+    N = Int(N) #For some reason it will implicitly convert N to a float64... not sure why
+    for i in 2:N-1
+        du[i] = D*(u[i+1]-2*u[i]+u[i-1])/dx^2
+    end#for
+
+    du[1]=0.0
+    du[N]=0.0
+end#function
+
+
+#A possible ODEFunction for PDESolver. Diffusion and advection equation
+#Should have parameters = [step-size, Number of steps(along x direction), Diffusion constant, velocity] 
+function AdvectionDiffusionFunction!(du, u, parameters, t)
+    dx,N,D,v = parameters #unpacking into variables
+    N = Int(N)
+    #Setting up numeric scheme for other derivatives
+    for i in 2:N-1
+        du[i] = D*(u[i+1]-2*u[i]+u[i-1])/dx^2 - (v/(2*dx))*(u[i+1]-u[i-1])
+    end#for
+
+    du[1]=0.0
+    du[N]=0.0
 end#function
