@@ -15,8 +15,10 @@ XLENGTH = 500
 YLENGTH = 100
 PROBABILTYOFMOVE = 1.0
 PROBABILTYOFPROLIFERATION = 1.0
-TIMEOFSIMULATION = 0
-NUMBEROFSIMULATIONS = 10
+TIMEOFSIMULATION = 5000
+NUMBEROFSIMULATIONS = 1
+
+BIAS = 1
 
 #Constants for initial conditions
 H = 50
@@ -42,7 +44,7 @@ C(x)=0.25*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T)));
 #C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T))) + 0.25*(erf((H-(x-center))/sqrt(4*D*T))+erf((H+(x-center))/sqrt(4*D*T)));
 
 #Calculate average densities as function of space.
-densities = calculateDensities(StochasticExclusionWalkAverage([XLENGTH, YLENGTH], TIMEOFSIMULATION, simGrid, NUMBEROFSIMULATIONS, PROBABILTYOFMOVE))
+densities = calculateDensities(StochasticExclusionWalkAverage([XLENGTH, YLENGTH], TIMEOFSIMULATION, simGrid, NUMBEROFSIMULATIONS, PROBABILTYOFMOVE, BIAS))
 println("Calculations Completed")
 #||||----PLOTS----||||#
 myPlot = scatter(xAxisValues,densities,mc=:black,msc=:match,label="Stochastic")
