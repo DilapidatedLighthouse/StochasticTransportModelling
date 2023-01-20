@@ -7,5 +7,5 @@ This script runs simulations for random walks on a grid where individual element
 <p align="center">
   <img src="https://user-images.githubusercontent.com/122573155/212587057-dbd8f928-4178-4ece-8ddd-a342c0b82fed.svg"/>
 </p>
-##functions.jl
+## functions.jl
 This file contains all major functions called by other files in the project.
