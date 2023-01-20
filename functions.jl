@@ -35,7 +35,6 @@ function StochasticExclusionWalkAverage(lengths, totalTime, simGrid, numSimultai
                         #decide on direction. 1: up 2: right 3:down 4:left
                         randMoveIndex = rand(1:length(biases))
                         moveDirection = biases[randMoveIndex]
-                    
                         #Move the agent
                         tempGrid = attemptActionWithDirection(moveDirection,tempGrid,randCoordinates, moveAgent)
                     end#if
@@ -66,6 +65,14 @@ function StochasticExclusionWalkAverage(lengths, totalTime, simGrid, numSimultai
     return averageDensity
 
 end#function
+
+
+function chooseDirectionWithXBias(Bias){
+    randomVar = rand(1)[1]
+    direction = (randomVar < 0.25) ? 1 : (randomVar >= 0.25 && randomVar < 0.5 - Bias/4) ? 2 : (randomVar >= 0.5 - Bias/4 && randomVar < 0.75) ? 4 : 3
+}
+
+
 
 function StochasticExclusionWalkAverageWithProliferation(lengths, totalTime, simGrid, numSimultaions, probMovement, probProliferation)
     totalAgents = sum(simGrid)

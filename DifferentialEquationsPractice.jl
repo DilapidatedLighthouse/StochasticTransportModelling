@@ -14,6 +14,7 @@ VELOCITY = 0.05
 
 #Associated with exact solutions
 DIFFUSIVITY=0.25
+D=DIFFUSIVITY
 
 #Associated with initial conditions
 h=20
