@@ -54,27 +54,26 @@ function StochasticExclusionWalkAverage(lengths, totalTime, simGrid, numSimultai
 
     return averageGrid
 
-    #----Relevant to a particular problem. Returning just averageGrid may be preferable
-    #calculate density along vertical lines
-    for i in 1:lengths[1]
-        for j in 1:lengths[2]
-            density[i]+=averageGrid[i,j]
-        end#for
-    end#for
+    # #----Relevant to a particular problem. Returning just averageGrid may be preferable
+    # #calculate density along vertical lines
+    # for i in 1:lengths[1]
+    #     for j in 1:lengths[2]
+    #         density[i]+=averageGrid[i,j]
+    #     end#for
+    # end#for
 
-    #Average number of agents along each vertical line on the grid, across all simulations
-    averageDensity = density/lengths[2]
-    return averageDensity
+    # #Average number of agents along each vertical line on the grid, across all simulations
+    # averageDensity = density/lengths[2]
+    # return averageDensity
 
 end#function
 
 
 function chooseDirectionWithXBias(Bias)
     randomVar = rand(1)[1]
-    direction = (randomVar < 0.25) ? 1 : (randomVar >= 0.25 && randomVar < 0.5 - Bias/4) ? 2 : (randomVar >= 0.5 - Bias/4 && randomVar < 0.75) ? 4 : 3
+    direction = (randomVar < 0.25) ? 1 : (randomVar >= 0.25 && randomVar < 0.5 + Bias/4) ? 2 : (randomVar >= 0.5 + Bias/4 && randomVar < 0.75) ? 4 : 3
     return direction
 end#function
-
 
 
 function StochasticExclusionWalkAverageWithProliferation(lengths, totalTime, simGrid, numSimultaions, probMovement, probProliferation)
@@ -106,13 +105,6 @@ function StochasticExclusionWalkAverageWithProliferation(lengths, totalTime, sim
                     if(moveQuery <= probMovement)
                         #decide on direction. 1: up 2: right 3:down 4:left
                         moveDirection = rand(1:4)
-                        function chooseDirectionWithXBias(Bias)
-    randomVar = rand(1)[1]
-    direction = (randomVar < 0.25) ? 1 : (randomVar >= 0.25 && randomVar < 0.5 - Bias/4) ? 2 : (randomVar >= 0.5 - Bias/4 && randomVar < 0.75) ? 4 : 3
-    return direction
-end#function
-
-
                         #Move the agent
                         tempGrid = attemptActionWithDirection(moveDirection,tempGrid,randCoordinates, moveAgent)
                     end#if
