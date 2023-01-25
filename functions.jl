@@ -96,6 +96,88 @@ function chooseDirectionWithXBias(Bias)
 end#function
 
 
+#ensure all times in 'times' array are integers
+function StochasticExclusionWalkAverageWithProliferationMultTimes(lengths, times, simGrid, numSimultaions, probMovement, probProliferation)
+    totalAgents = sum(simGrid)
+    sumGrids = fill(zeros(lengths...),length(times))#The result of each simulation will be added to this variable so it can be averaged later
+    maxTime = maximum(times)
+
+    for sim in 1:numSimultaions
+        println("Simulation: ",sim)#Print the current number of simulations
+
+        tempGrid = copy(simGrid)
+
+        for t in 1:maxTime
+            
+            count=0
+            
+            #Move the agents
+            while count < totalAgents #choose random cell to try to find an agent to move
+               randCoordinates = []
+               for i in eachindex(lengths)
+                    append!(randCoordinates,rand(1:lengths[i]))
+               end#for
+
+               #Check if the cell contains an agent
+               if(tempGrid[randCoordinates...]==1)
+                    count+=1
+                    #Does it move?
+                    moveQuery = rand(1)[1]
+                    if(moveQuery <= probMovement)
+                        #decide on direction. 1: up 2: right 3:down 4:left
+                        moveDirection = rand(1:4)
+                        #Move the agent
+                        tempGrid = attemptActionWithDirection(moveDirection,tempGrid,randCoordinates, moveAgent)
+                    end#if
+                end#if
+            end#while
+
+            #proliferate
+            tempTotalAgents = totalAgents
+            count = 0
+            while count < totalAgents #choose random cell to try to find an agent to move
+                randCoordinates = []
+                for i in eachindex(lengths)
+                     append!(randCoordinates,rand(1:lengths[i]))
+                end#for
+ 
+                #Check if the cell contains an agent
+                if(tempGrid[randCoordinates...]==1)
+                     count += 1
+                     tempTotalAgents += 1
+                     #Does it proliferate?
+                     proliferateQuery = rand(1)[1]
+                     if(proliferateQuery <= probProliferation)
+                         #decide on direction. 1: up 2: right 3:down 4:left
+                         moveDirection = rand(1:4)
+                     
+                         #Proliferate
+                         tempGrid = attemptActionWithDirection(moveDirection,tempGrid,randCoordinates, proliferate)
+                     end#if
+                 end#if
+             end#while
+
+            #Making sumGrid
+            if(t in times)
+                sumGrids[findlast(time -> time==t, times)]+=tempGrid
+            end#if
+
+        end#for
+        
+        # #Sum the results of all simulations
+        
+        # sumGrid+=tempGrid
+        
+    end#for
+    
+    #Average placement of agents across the grid throughout all simulations
+    averageGrid = sumGrids/numSimultaions
+    
+
+    return averageGrid
+
+end#function
+
 function StochasticExclusionWalkAverageWithProliferation(lengths, totalTime, simGrid, numSimultaions, probMovement, probProliferation)
     totalAgents = sum(simGrid)
     integerTime = Int(totalTime)
@@ -329,8 +411,8 @@ end#function
 function PDESolver(parameters, C0, Times,ODEFunction)
     timeSpan = (0.0, maximum(Times))
     problem = ODEProblem(ODEFunction,C0,timeSpan,parameters) #create a 'problem' for use with DifferentialEquations package
-    
-    solution = solve(problem,saveat=Times)
+    println(Times)
+    solution = solve(problem,saveat=[Times...])
     
     for i in 1:length(solution[:,])
         numericSolutions[i,:]=solution[:,i]
@@ -340,7 +422,7 @@ function PDESolver(parameters, C0, Times,ODEFunction)
     
 end#function
 
-
+    #||||----Differential Equations for numerical solving----||||#
 #A possible ODEFunction for PDESolver. Diffusion equation
 #Should have parameters = [step-size, Number of steps(along x direction), Diffusion constant] 
 function DiffusionFunction!(du, u, parameters, t)
@@ -364,6 +446,20 @@ function AdvectionDiffusionFunction!(du, u, parameters, t)
     #Setting up numeric scheme for other derivatives
     for i in 2:N-1
         du[i] = D*(u[i+1]-2*u[i]+u[i-1])/dx^2 - (v*(1-2*u[i])/(2*dx))*(u[i+1]-u[i-1])
+    end#for
+
+    du[1]=0.0
+    du[N]=0.0
+end#function
+
+
+#Should have parameters = [step-size, Number of steps(along x direction), Diffusion constant, Logistic constant] Logistic constant is a rate parameter for the logisitic growth equation
+function Logistic!(du, u, parameters, t)
+    dx,N, D, lmbda = parameters #unpacking into variables
+    N = Int(N)
+    #Setting up numeric scheme for other derivatives
+    for i in 2:N-1
+        du[i] = D*(u[i+1]-2*u[i]+u[i-1])/dx^2 + lmbda*u[i]*(1-u[i])
     end#for
 
     du[1]=0.0

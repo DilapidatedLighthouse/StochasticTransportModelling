@@ -1,3 +1,4 @@
+using DifferentialEquations
 include("functions.jl")
 
 #||||----Variables----||||#
