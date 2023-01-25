@@ -1,3 +1,23 @@
+
+using Plots, SpecialFunctions, Random
+
+#||||----GENERAL----||||#
+
+#Can be plotted with scatter(gridPoints[1],gridPoints[2])
+function PrepGridForDisplay(simGrid)
+    gridPoints = [[],[]]
+    for i in axes(simGrid,1)
+            for j in axes(simGrid, 2)
+                if(simGrid[i,j] == 1.0)
+                    append!(gridPoints[1],i)
+                    append!(gridPoints[2],j)
+                end#if
+            end#for
+    end#for
+    return gridPoints
+end#Function
+
+
 #||||----STOCHASTIC PROCESSES----||||#
 
 #Meat and bones. Runs simulations of cells moving on a grid and averages the results.
