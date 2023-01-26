@@ -4,8 +4,8 @@ include("functions.jl")
 #||||----Variables----||||#
 XLENGTH = 500
 YLENGTH = 50
-Times = [0,1000,2000,3000]
-STEPSIZE = 0.50
+Times = [1, 50, 100]
+STEPSIZE = 1
 
 NUMSIMULATIONS = 10
 VELOCITY = 0.05
@@ -27,7 +27,6 @@ simGrid = createBlock(0,2*H, YLENGTH, simGrid,xAxisValues)
 
 
 #Biased migration with diffusion
-#densities = calculateDensities(StochasticExclusionWalkAverage([XLENGTH,YLENGTH],Times[2],simGrid,NUMSIMULATIONS,1,VELOCITY))
 
 #p1 = scatter(xAxisValues,densities,mc=:black,msc=:match,label="Stochastic")
 
@@ -65,17 +64,17 @@ function CalcNumericSolution(STEPSIZE, Times, D, VELOCITY,XLENGTH)
 end#function
 #p1=plot(x,numericSolutions[2,:],lw=2,xlims=(-XLENGTH/2,XLENGTH/2),ylims=(0,1.2), ylabel="C(x,t)",legend=false)
 
-x, numericSolutions = CalcNumericSolution(STEPSIZE/2,Times, D, VELOCITY*1.25, XLENGTH)
+# x, numericSolutions = CalcNumericSolution(STEPSIZE/2,Times, D, VELOCITY*1.25, XLENGTH)
 
-plotArray = []
-for i in 1:size(numericSolutions)[1]
-    append!(plotArray, plot(x,numericSolutions[i,:],lw=2,xlims=(-XLENGTH/2,XLENGTH/2),ylims=(0,1.2), ylabel="C(x,t)",legend=false))
-end#for
-
-
+# plotArray = []
+# for i in 1:size(numericSolutions)[1]
+#     append!(plotArray, plot(x,numericSolutions[i,:],lw=2,xlims=(-XLENGTH/2,XLENGTH/2),ylims=(0,1.2), ylabel="C(x,t)",legend=false))
+# end#for
 
 
-#||--Calculating errors--||#
+
+
+#||--Calculating Differences--||#
 stepSizes = [0.1, 0.2, 0.5]
 refNumericSolutions = CalcNumericSolution(1, [3000], D, VELOCITY, XLENGTH)[2]
 errors = []
@@ -87,11 +86,27 @@ for i in eachindex(stepSizes)
     end#for
     append!(errors, [tempErrors])
 end#for
-#p1 = plotNumericSolution(STEPSIZE/2,Times, D, VELOCITY*1.25, XLENGTH)
-#display(p1)
 
-p2 = plot(-XLENGTH:2:XLENGTH, errors[2], lc=:black, ylims=(-0.005,0.005),framestyle=:box, legend = false, title = "Step-size 1 vs 0.2", xlabel = "x", ylabel = "N(x,3000)")
-p3 = plot(-XLENGTH:2:XLENGTH, errors[3], lc=:black, ylims=(-0.005,0.005),framestyle=:box, legend = false, title = "Step-size 1 vs 0.5", xlabel = "x", ylabel = "N(x,3000)")
-p1 = plot(-XLENGTH:2:XLENGTH, errors[1], lc=:black, ylims=(-0.005,0.005),framestyle=:box, legend = false, title = "Step-size 1 vs 0.1", xlabel = "x", ylabel = "N(x,3000)")
+p2 = plot(-XLENGTH/2:1:XLENGTH/2, errors[2], lc=:black, ylims=(-0.005,0.005),framestyle=:box, legend = false, title = "Step-size 1 vs 0.2", xlabel = "x", ylabel = "N(x,3000)")
+p3 = plot(-XLENGTH/2:1:XLENGTH/2, errors[3], lc=:black, ylims=(-0.005,0.005),framestyle=:box, legend = false, title = "Step-size 1 vs 0.5", xlabel = "x", ylabel = "N(x,3000)")
+p1 = plot(-XLENGTH/2:1:XLENGTH/2, errors[1], lc=:black, ylims=(-0.005,0.005),framestyle=:box, legend = false, title = "Step-size 1 vs 0.1", xlabel = "x", ylabel = "N(x,3000)")
 
 fullPlot = plot(p3,p2,p1, layout = (3,1), titlefontsize=10)
+
+# #||--Plotting with Stochastic--||#
+# stochasticSolutions = StochasticExclusionWalkAverageMultTimes([XLENGTH,YLENGTH],Times,simGrid,NUMSIMULATIONS,1,VELOCITY)
+# # densities = map(x -> calculateDensities(x), stochasticSolutions)
+# densities = []
+# for i in stochasticSolutions
+#     append!(densities, [calculateDensities(i)])
+# end#for
+
+
+# numericSolutions = CalcNumericSolution(STEPSIZE, Times, D, VELOCITY, XLENGTH)
+
+# p1 = scatter(densities[1])
+# #p1 = plot!(numericSolutions[1])
+
+# p2 = scatter
+
+# #scatter(calculateDensities(tempstochasticSolutions[1]))

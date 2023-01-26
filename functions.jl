@@ -178,6 +178,64 @@ function StochasticExclusionWalkAverageWithProliferationMultTimes(lengths, times
 
 end#function
 
+
+function StochasticExclusionWalkAverageMultTimes(lengths, times, simGrid, numSimultaions, probMovement, bias)
+    totalAgents = sum(simGrid)
+    sumGrids = fill(zeros(lengths...),length(times))#The result of each simulation will be added to this variable so it can be averaged later
+    maxTime = maximum(times)
+
+    for sim in 1:numSimultaions
+        println("Simulation: ",sim)#Print the current number of simulations
+
+        tempGrid = copy(simGrid)
+
+        for t in 1:maxTime
+            
+            count=0
+            
+            #Move the agents
+            while count < totalAgents #choose random cell to try to find an agent to move
+               randCoordinates = []
+               for i in eachindex(lengths)
+                    append!(randCoordinates,rand(1:lengths[i]))
+               end#for
+
+               #Check if the cell contains an agent
+               if(tempGrid[randCoordinates...]==1)
+                    count+=1
+                    #Does it move?
+                    moveQuery = rand(1)[1]
+                    if(moveQuery <= probMovement)
+                        # #decide on direction. 1: up 2: right 3:down 4:left
+                        # randMoveIndex = rand(1:length(biases))
+                        # moveDirection = biases[randMoveIndex]
+                        moveDirection = chooseDirectionWithXBias(bias)
+
+                        #Move the agent
+                        tempGrid = attemptActionWithDirection(moveDirection,tempGrid,randCoordinates, moveAgent)
+                    end#if
+                end#if
+            end#while
+            if(t in times)
+                sumGrids[findlast(time -> time==t, times)]+=tempGrid
+            end#if
+
+        end#for
+        
+        # #Sum the results of all simulations
+        
+        # sumGrid+=tempGrid
+        
+    end#for
+    
+    #Average placement of agents across the grid throughout all simulations
+    averageGrid = sumGrids/numSimultaions
+    
+
+    return averageGrid
+
+end#function
+
 function StochasticExclusionWalkAverageWithProliferation(lengths, totalTime, simGrid, numSimultaions, probMovement, probProliferation)
     totalAgents = sum(simGrid)
     integerTime = Int(totalTime)
