@@ -411,9 +411,11 @@ end#function
 function PDESolver(parameters, C0, Times,ODEFunction)
     timeSpan = (0.0, maximum(Times))
     problem = ODEProblem(ODEFunction,C0,timeSpan,parameters) #create a 'problem' for use with DifferentialEquations package
-    println(Times)
-    solution = solve(problem,saveat=[Times...])
-    
+    numericSolutions = zeros(length(Times), Int(parameters[2]))
+    println("Numeric solutions new size = ", size(numericSolutions))
+    solution = solve(problem,saveat=Times)
+    println(size(numericSolutions))
+    println(size(solution))
     for i in 1:length(solution[:,])
         numericSolutions[i,:]=solution[:,i]
     end#for
