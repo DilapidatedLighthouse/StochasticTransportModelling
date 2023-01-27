@@ -8,7 +8,7 @@ function PrepGridForDisplay(simGrid)
     gridPoints = [[],[]]
     for i in axes(simGrid,1)
             for j in axes(simGrid, 2)
-                if(simGrid[i,j] == 1.0)
+                if(simGrid[i,j] > 0.0)
                     append!(gridPoints[1],i)
                     append!(gridPoints[2],j)
                 end#if
@@ -515,7 +515,7 @@ end#function
 
 #Should have parameters = [step-size, Number of steps(along x direction), Diffusion constant, Logistic constant] Logistic constant is a rate parameter for the logisitic growth equation
 function Logistic!(du, u, parameters, t)
-    dx,N, D, lmbda = parameters #unpacking into variables
+    dx, N, D, lmbda = parameters #unpacking into variables
     N = Int(N)
     #Setting up numeric scheme for other derivatives
     for i in 2:N-1
