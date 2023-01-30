@@ -46,7 +46,7 @@ densities = map(x -> calculateDensities(x), a)
 C0 = fill(initialDensity, NUMBEROFSTEPS)
 
 numericSolutions = zeros(length(times),NUMBEROFSTEPS) 
-theoreticSolutions = PDESolver([STEPSIZE, NUMBEROFSTEPS, probMovement, probProliferation], C0, times, Logistic!)
+theoreticSolutions = PDESolver([STEPSIZE, NUMBEROFSTEPS, probMovement, probProliferation], C0, times, FisherKolmogorov!)
 p1 = scatter(-XLENGTH/2:XLENGTH/2 , densities[4])
 p1 = plot!(-XLENGTH/2:STEPSIZE:XLENGTH/2, theoreticSolutions[4,:])
 display(p1)

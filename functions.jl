@@ -107,7 +107,7 @@ function StochasticExclusionWalkAverageWithProliferationMultTimes(lengths, times
 
         tempGrid = copy(simGrid)
 
-        for t in 1:maxTime
+        for t in 0:maxTime
             
             count=0
             
@@ -514,7 +514,7 @@ end#function
 
 
 #Should have parameters = [step-size, Number of steps(along x direction), Diffusion constant, Logistic constant] Logistic constant is a rate parameter for the logisitic growth equation
-function Logistic!(du, u, parameters, t)
+function FisherKolmogorov!(du, u, parameters, t)
     dx, N, D, lmbda = parameters #unpacking into variables
     N = Int(N)
     #Setting up numeric scheme for other derivatives
