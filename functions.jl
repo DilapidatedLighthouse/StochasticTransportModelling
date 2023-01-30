@@ -97,6 +97,105 @@ end#function
 
 
 #ensure all times in 'times' array are integers
+function StochasticExclusionWalkAverageWithProliferationMultTimesWithRandomIC(lengths, times, simGrid, numSimultaions, probMovement, probProliferation, initialDensity)
+    totalAgents = sum(simGrid)
+    sumGrids = fill(zeros(lengths...),length(times))#The result of each simulation will be added to this variable so it can be averaged later
+    maxTime = maximum(times)
+
+    for sim in 1:numSimultaions
+        simGrid = zeros(lengths...)
+        randCount = 0
+        simGrid = zeros(XLENGTH,YLENGTH)
+        for i in eachindex(simGrid)
+            occupiedCheck = rand(1)[1]
+            if(occupiedCheck < initialDensity && simGrid[i] != 1.0)
+                randCount += 1
+                simGrid[i] = 1.0
+                
+
+            end#if
+            # if(randCount > initialDensity*XLENGTH*YLENGTH)
+                
+            #     break
+            # end#if
+        end#for
+        totalAgents = sum(simGrid)
+
+
+        println("Simulation: ",sim)#Print the current number of simulations
+
+        tempGrid = copy(simGrid)
+
+        for t in 0:maxTime
+            
+            local count=0
+            
+            #Move the agents
+            while count < totalAgents #choose random cell to try to find an agent to move
+               randCoordinates = []
+               for i in eachindex(lengths)
+                    append!(randCoordinates,rand(1:lengths[i]))
+               end#for
+
+               #Check if the cell contains an agent
+               if(tempGrid[randCoordinates...]==1)
+                    count+=1
+                    #Does it move?
+                    moveQuery = rand(1)[1]
+                    if(moveQuery <= probMovement)
+                        #decide on direction. 1: up 2: right 3:down 4:left
+                        moveDirection = rand(1:4)
+                        #Move the agent
+                        tempGrid = attemptActionWithDirection(moveDirection,tempGrid,randCoordinates, moveAgent)
+                    end#if
+                end#if
+            end#while
+
+            #proliferate
+            tempTotalAgents = totalAgents
+            count = 0
+            while count < totalAgents #choose random cell to try to find an agent to move
+                randCoordinates = []
+                for i in eachindex(lengths)
+                     append!(randCoordinates,rand(1:lengths[i]))
+                end#for
+ 
+                #Check if the cell contains an agent
+                if(tempGrid[randCoordinates...]==1)
+                     count += 1
+                     tempTotalAgents += 1
+                     #Does it proliferate?
+                     proliferateQuery = rand(1)[1]
+                     if(proliferateQuery <= probProliferation)
+                         #decide on direction. 1: up 2: right 3:down 4:left
+                         moveDirection = rand(1:4)
+                     
+                         #Proliferate
+                         tempGrid = attemptActionWithDirection(moveDirection,tempGrid,randCoordinates, proliferate)
+                     end#if
+                 end#if
+             end#while
+
+            #Making sumGrid
+            if(t in times)
+                sumGrids[findlast(time -> time==t, times)]+=tempGrid
+            end#if
+
+        end#for
+        
+        # #Sum the results of all simulations
+        
+        # sumGrid+=tempGrid
+        
+    end#for
+    
+    #Average placement of agents across the grid throughout all simulations
+    averageGrid = sumGrids/numSimultaions
+    
+
+    return averageGrid
+
+end#function
 function StochasticExclusionWalkAverageWithProliferationMultTimes(lengths, times, simGrid, numSimultaions, probMovement, probProliferation)
     totalAgents = sum(simGrid)
     sumGrids = fill(zeros(lengths...),length(times))#The result of each simulation will be added to this variable so it can be averaged later

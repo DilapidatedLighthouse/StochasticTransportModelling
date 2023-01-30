@@ -15,8 +15,8 @@ XLENGTH = 500
 YLENGTH = 100
 PROBABILTYOFMOVE = 1.0
 PROBABILTYOFPROLIFERATION = 1.0
-TIMEOFSIMULATION = 500
-NUMBEROFSIMULATIONS = 10
+TIMEOFSIMULATION = 0
+NUMBEROFSIMULATIONS = 1
 
 BIAS = -0.125
 
@@ -34,10 +34,7 @@ xAxisValues = [((-XLENGTH/2):((XLENGTH/2)-1))...]
 #Initialise grid with agents
 simGrid = zeros(XLENGTH,YLENGTH)
 
-simGrid = createBlock(0,2*H, 
-
-
-YLENGTH, simGrid,xAxisValues)
+simGrid = createBlock(0,2*H, YLENGTH, simGrid,xAxisValues)
 center=-150
 #simGrid = createBlockEven(center,2*H, YLENGTH, simGrid,xAxisValues)
 #Heat equation. Will have to be manually changed to match the initial conditions and simulation behaviour
