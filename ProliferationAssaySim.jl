@@ -7,12 +7,12 @@ YLENGTH = 20
 initialDensity = 0.2
 
 times = [5,6,7,8]
-numSimulations = 10
+numSimulations = 1
 probMovement = 1
 probProliferation = 0.1
 BIAS = 0
 
-STEPSIZE = 0.50
+STEPSIZE = 1
 NUMBEROFSTEPS = Int(XLENGTH/STEPSIZE)+1
 #Initialise a grid with randomly placed agents
 
