@@ -97,8 +97,8 @@ end#function
 
 
 #ensure all times in 'times' array are integers
-function StochasticExclusionWalkAverageWithProliferationMultTimesWithRandomIC(lengths, times, simGrid, numSimultaions, probMovement, probProliferation, initialDensity)
-    totalAgents = sum(simGrid)
+function StochasticExclusionWalkAverageWithProliferationMultTimesWithRandomIC(lengths, times, numSimultaions, probMovement, probProliferation, initialDensity)
+    
     sumGrids = fill(zeros(lengths...),length(times))#The result of each simulation will be added to this variable so it can be averaged later
     maxTime = maximum(times)
 

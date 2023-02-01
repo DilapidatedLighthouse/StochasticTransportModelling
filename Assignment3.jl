@@ -2,8 +2,8 @@ using Plots, SpecialFunctions, Random, DifferentialEquations
 include("functions.jl")
 
 #|||---VARIABLES----||||#
-XLENGTH = 20
-YLENGTH = 20
+XLENGTH = 50
+YLENGTH = 50
 initialDensity = 0.2
 times = 0:1000
 numSimulations = 20
@@ -33,7 +33,7 @@ NUMBEROFSTEPS = Int(XLENGTH/STEPSIZE)+1
 
 
 #Produce averaged lattices with proliferation for a number of time steps
-averagedSimulationGrids = StochasticExclusionWalkAverageWithProliferationMultTimesWithRandomIC([XLENGTH,YLENGTH], times, simGrid, numSimulations, probMovement, probProliferation, initialDensity)
+averagedSimulationGrids = StochasticExclusionWalkAverageWithProliferationMultTimesWithRandomIC([XLENGTH,YLENGTH], times, numSimulations, probMovement, probProliferation, initialDensity)
 densities_y = map(x -> calculateDensities(x), averagedSimulationGrids) #Average results over the y direction
 densities_full = map(x -> sum(x)/length(x), densities_y) #Average results over x direction
 initialDensity = densities_full[1]
