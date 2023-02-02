@@ -2,9 +2,9 @@ using Plots, SpecialFunctions, Random, DifferentialEquations, Measures
 include("functions.jl")
 
 #|||---VARIABLES----||||#
-XLENGTH = 10
-YLENGTH = 10
-initialDensity = 0.9
+XLENGTH = 100
+YLENGTH = 100
+initialDensity = 0.2
 times = 1:200
 numSimulations = 10
 probMovement = 1
@@ -88,12 +88,13 @@ NUMBEROFSTEPS = Int(XLENGTH/STEPSIZE)+1
 #||||----QUESTION 2----||||#
 
 #Now set up an initial condition independent of the vertical position
-numSimulations = 1
+numSimulations = 10
 XLENGTH = 250
-YLENGTH = 50
+YLENGTH = 100
+println("YLENGTH = ", YLENGTH)
 STEPSIZE = 1
 NUMBEROFSTEPS = Int(XLENGTH/STEPSIZE)
-times = [25]
+times = [100]
 H = 25
 probMovement = 1
 
@@ -114,7 +115,7 @@ C0 = calculateDensities(simGrid)
 numericSolutions = zeros(length(times),NUMBEROFSTEPS) 
 theoreticSolutions = PDESolver([STEPSIZE, NUMBEROFSTEPS, probMovement, probProliferation], C0, times, FisherKolmogorov!)
 #Plot together
-plot1 = scatter(xAxisValues, densities_y, xlabel = "x", ylabel = "N", title = "P_m = 1, P_p = 0.01", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+plot1 = scatter(xAxisValues, densities_y, xlabel = "x", ylabel = "N", title = "P_m = 1, P_p = 0.1", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
 plot1 = plot!(xAxisValues, theoreticSolutions[1,:], lc = :black, label = "Exact", lw = 3)
 
 
@@ -142,12 +143,12 @@ C0 = calculateDensities(simGrid)
 numericSolutions = zeros(length(times),NUMBEROFSTEPS) 
 theoreticSolutions = PDESolver([STEPSIZE, NUMBEROFSTEPS, probMovement, probProliferation], C0, times, FisherKolmogorov!)
 #Plot together
-plot3 = scatter(xAxisValues, densities_y, xlabel = "x", ylabel = "N", title = "P_m = 1, P_p = 0.01", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+plot3 = scatter(xAxisValues, densities_y, xlabel = "x", ylabel = "N", title = "P_m = 1, P_p = 0.001", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 1cm, label = "Stochastic")
 plot3 = plot!(xAxisValues, theoreticSolutions[1,:], lc = :black, label = "Exact", lw = 3)
 
 
-probMovement = 0.01
-probProliferation = 0.01
+probMovement = 1
+probProliferation = 1
 #Run simulation with proliferation
 averagedSimulationGrids = StochasticExclusionWalkAverageWithProliferationMultTimes([XLENGTH,YLENGTH], times, simGrid, numSimulations, probMovement, probProliferation)
 densities_y = map(x -> calculateDensities(x), averagedSimulationGrids) #Average results over the y direction
@@ -156,9 +157,49 @@ C0 = calculateDensities(simGrid)
 numericSolutions = zeros(length(times),NUMBEROFSTEPS) 
 theoreticSolutions = PDESolver([STEPSIZE, NUMBEROFSTEPS, probMovement, probProliferation], C0, times, FisherKolmogorov!)
 #Plot together
-plot4 = scatter(xAxisValues, densities_y, xlabel = "x", ylabel = "N", title = "P_m = 1, P_p = 0.01", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+plot4 = scatter(xAxisValues, densities_y, xlabel = "x", ylabel = "N", title = "P_m = 0.01, P_p = 0.01", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
 plot4 = plot!(xAxisValues, theoreticSolutions[1,:], lc = :black, label = "Exact", lw = 3)
 
 totalPlot = plot(plot1,plot2, plot3, plot4, layout = (1,4), size = (2000,500))
 display(totalPlot)
 
+
+# #||||----QUESTION 2.b----||||#
+
+# numSimulations = 10
+# XLENGTH = 250
+# YLENGTH = 100
+# println("YLENGTH = ", YLENGTH)
+# STEPSIZE = 1
+# NUMBEROFSTEPS = Int(XLENGTH/STEPSIZE)
+# times = [100, 500, 1000, 1500]
+# H = 25
+# probMovement = 1
+
+# xAxisValues = [((-XLENGTH/2):((XLENGTH/2)-1))...]
+
+
+# probMovement = 0.01
+# probProliferation = 0.01
+# #Run simulation with proliferation
+# averagedSimulationGrids = StochasticExclusionWalkAverageWithProliferationMultTimes([XLENGTH,YLENGTH], times, simGrid, numSimulations, probMovement, probProliferation)
+# densities_y = map(x -> calculateDensities(x), averagedSimulationGrids) #Average results over the y direction
+# #Solve the Fisher-Kolmogorov model numerically
+# C0 = calculateDensities(simGrid) 
+# numericSolutions = zeros(length(times),NUMBEROFSTEPS) 
+# theoreticSolutions = PDESolver([STEPSIZE, NUMBEROFSTEPS, probMovement, probProliferation], C0, times, FisherKolmogorov!)
+# #Plot together
+# plot1 = scatter(xAxisValues, densities_y[1], xlabel = "x", ylabel = "N", title = "t = 100", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+# plot1 = plot!(xAxisValues, theoreticSolutions[1,:], lc = :black, label = "Exact", lw = 3)
+
+# plot2 = scatter(xAxisValues, densities_y[2], xlabel = "x", ylabel = "N", title = "t = 500", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+# plot2 = plot!(xAxisValues, theoreticSolutions[1,:], lc = :black, label = "Exact", lw = 3)
+
+# plot3 = scatter(xAxisValues, densities_y[3], xlabel = "x", ylabel = "N", title = "t = 1000", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+# plot3 = plot!(xAxisValues, theoreticSolutions[1,:], lc = :black, label = "Exact", lw = 3)
+
+# plot4 = scatter(xAxisValues, densities_y[4], xlabel = "x", ylabel = "N", title = "t = 1500", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+# plot4 = plot!(xAxisValues, theoreticSolutions[1,:], lc = :black, label = "Exact", lw = 3)
+
+# totalPlot = plot(plot1,plot2, plot3, plot4, layout = (1,4), size = (2000,500))
+# display(totalPlot)
