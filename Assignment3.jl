@@ -1,12 +1,12 @@
-using Plots, SpecialFunctions, Random, DifferentialEquations
+using Plots, SpecialFunctions, Random, DifferentialEquations, Measures
 include("functions.jl")
 
 #|||---VARIABLES----||||#
-XLENGTH = 50
-YLENGTH = 50
-initialDensity = 0.2
-times = 0:1000
-numSimulations = 2
+XLENGTH = 10
+YLENGTH = 10
+initialDensity = 0.9
+times = 1:200
+numSimulations = 10
 probMovement = 1
 probProliferation = 0.01
 BIAS = 0
@@ -32,10 +32,11 @@ NUMBEROFSTEPS = Int(XLENGTH/STEPSIZE)+1
 # end#for
 
 
-#||||----QUESTION 1----||||#
+# #||||----QUESTION 1----||||#
 
 
 # #Produce averaged lattices with proliferation for a number of time steps
+# probProliferation = 0.1
 # averagedSimulationGrids = StochasticExclusionWalkAverageWithProliferationMultTimesWithRandomIC([XLENGTH,YLENGTH], times, numSimulations, probMovement, probProliferation, initialDensity)
 # densities_y = map(x -> calculateDensities(x), averagedSimulationGrids) #Average results over the y direction
 # densities_full = map(x -> sum(x)/length(x), densities_y) #Average results over x direction
@@ -43,39 +44,121 @@ NUMBEROFSTEPS = Int(XLENGTH/STEPSIZE)+1
 # #Produce numerical solutions for a number of time steps using the logistic equation
 # theoreticalDensities = map(t -> initialDensity/((1-initialDensity)*exp(-probProliferation*t) + initialDensity), times)
 # #Graph these together
-# timeChangePlot = plot(times, densities_full)
-# timeChangePlot = plot!(times, theoreticalDensities)
-# display(timeChangePlot)
+# timeChangePlot1 = scatter(times, densities_full, xlabel = "t", ylabel = "N", title = "P_m = 1, P_p = 0.1", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+# timeChangePlot1 = plot!(times, theoreticalDensities, lc = :black, label = "Exact", lw = 3)
 
+# probProliferation = 0.01
+# averagedSimulationGrids = StochasticExclusionWalkAverageWithProliferationMultTimesWithRandomIC([XLENGTH,YLENGTH], times, numSimulations, probMovement, probProliferation, initialDensity)
+# densities_y = map(x -> calculateDensities(x), averagedSimulationGrids) #Average results over the y direction
+# densities_full = map(x -> sum(x)/length(x), densities_y) #Average results over x direction
+# initialDensity = densities_full[1]
+# #Produce numerical solutions for a number of time steps using the logistic equation
+# theoreticalDensities = map(t -> initialDensity/((1-initialDensity)*exp(-probProliferation*t) + initialDensity), times)
+# #Graph these together
+# timeChangePlot2 = scatter(times, densities_full, xlabel = "t", ylabel = "N", title = "P_m = 1, P_p = 0.01", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+# timeChangePlot2 = plot!(times, theoreticalDensities, lc = :black, label = "Exact", lw = 3)
+
+# probProliferation = 0.001
+# averagedSimulationGrids = StochasticExclusionWalkAverageWithProliferationMultTimesWithRandomIC([XLENGTH,YLENGTH], times, numSimulations, probMovement, probProliferation, initialDensity)
+# densities_y = map(x -> calculateDensities(x), averagedSimulationGrids) #Average results over the y direction
+# densities_full = map(x -> sum(x)/length(x), densities_y) #Average results over x direction
+# initialDensity = densities_full[1]
+# #Produce numerical solutions for a number of time steps using the logistic equation
+# theoreticalDensities = map(t -> initialDensity/((1-initialDensity)*exp(-probProliferation*t) + initialDensity), times)
+# #Graph these together
+# timeChangePlot3 = scatter(times, densities_full, xlabel = "t", ylabel = "N", title = "P_m = 1, P_p = 0.001", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+# timeChangePlot3 = plot!(times, theoreticalDensities, lc = :black, label = "Exact", lw = 3)
+
+# probMovement = 0.01
+# probProliferation = 0.01
+# averagedSimulationGrids = StochasticExclusionWalkAverageWithProliferationMultTimesWithRandomIC([XLENGTH,YLENGTH], times, numSimulations, probMovement, probProliferation, initialDensity)
+# densities_y = map(x -> calculateDensities(x), averagedSimulationGrids) #Average results over the y direction
+# densities_full = map(x -> sum(x)/length(x), densities_y) #Average results over x direction
+# initialDensity = densities_full[1]
+# #Produce numerical solutions for a number of time steps using the logistic equation
+# theoreticalDensities = map(t -> initialDensity/((1-initialDensity)*exp(-probProliferation*t) + initialDensity), times)
+# #Graph these together
+# timeChangePlot4 = scatter(times, densities_full, xlabel = "t", ylabel = "N", title = "P_m = 0.01, P_p = 0.01", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+# timeChangePlot4 = plot!(times, theoreticalDensities, lc = :black, label = "Exact", lw = 3)
+
+# totalPlot = plot(timeChangePlot1,timeChangePlot2, timeChangePlot3, timeChangePlot4, layout = (1,4), size = (2000,500))
+# display(totalPlot)
 
 
 #||||----QUESTION 2----||||#
 
 #Now set up an initial condition independent of the vertical position
+numSimulations = 1
 XLENGTH = 250
 YLENGTH = 50
 STEPSIZE = 1
 NUMBEROFSTEPS = Int(XLENGTH/STEPSIZE)
-times = [100]
-H = 50
+times = [25]
+H = 25
+probMovement = 1
 
 xAxisValues = [((-XLENGTH/2):((XLENGTH/2)-1))...]
 
-simGrid = zeros(XLENGTH,YLENGTH)
 
+
+simGrid = zeros(XLENGTH,YLENGTH)
 simGrid = createBlock(0,2*H, YLENGTH, simGrid,xAxisValues)
+
+
+probProliferation = 0.1
 #Run simulation with proliferation
 averagedSimulationGrids = StochasticExclusionWalkAverageWithProliferationMultTimes([XLENGTH,YLENGTH], times, simGrid, numSimulations, probMovement, probProliferation)
 densities_y = map(x -> calculateDensities(x), averagedSimulationGrids) #Average results over the y direction
-
 #Solve the Fisher-Kolmogorov model numerically
 C0 = calculateDensities(simGrid) 
 numericSolutions = zeros(length(times),NUMBEROFSTEPS) 
 theoreticSolutions = PDESolver([STEPSIZE, NUMBEROFSTEPS, probMovement, probProliferation], C0, times, FisherKolmogorov!)
 #Plot together
+plot1 = scatter(xAxisValues, densities_y, xlabel = "x", ylabel = "N", title = "P_m = 1, P_p = 0.01", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+plot1 = plot!(xAxisValues, theoreticSolutions[1,:], lc = :black, label = "Exact", lw = 3)
 
 
 
-#||||----TO DO----||||#
-#  - Start to fill in this CODE
-#  - Write function for the Fisher-Kolmogorov model
+probProliferation = 0.1
+#Run simulation with proliferation
+averagedSimulationGrids = StochasticExclusionWalkAverageWithProliferationMultTimes([XLENGTH,YLENGTH], times, simGrid, numSimulations, probMovement, probProliferation)
+densities_y = map(x -> calculateDensities(x), averagedSimulationGrids) #Average results over the y direction
+#Solve the Fisher-Kolmogorov model numerically
+C0 = calculateDensities(simGrid) 
+numericSolutions = zeros(length(times),NUMBEROFSTEPS) 
+theoreticSolutions = PDESolver([STEPSIZE, NUMBEROFSTEPS, probMovement, probProliferation], C0, times, FisherKolmogorov!)
+#Plot together
+plot2 = scatter(xAxisValues, densities_y, xlabel = "x", ylabel = "N", title = "P_m = 1, P_p = 0.01", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+plot2 = plot!(xAxisValues, theoreticSolutions[1,:], lc = :black, label = "Exact", lw = 3)
+
+
+
+probProliferation = 0.1
+#Run simulation with proliferation
+averagedSimulationGrids = StochasticExclusionWalkAverageWithProliferationMultTimes([XLENGTH,YLENGTH], times, simGrid, numSimulations, probMovement, probProliferation)
+densities_y = map(x -> calculateDensities(x), averagedSimulationGrids) #Average results over the y direction
+#Solve the Fisher-Kolmogorov model numerically
+C0 = calculateDensities(simGrid) 
+numericSolutions = zeros(length(times),NUMBEROFSTEPS) 
+theoreticSolutions = PDESolver([STEPSIZE, NUMBEROFSTEPS, probMovement, probProliferation], C0, times, FisherKolmogorov!)
+#Plot together
+plot3 = scatter(xAxisValues, densities_y, xlabel = "x", ylabel = "N", title = "P_m = 1, P_p = 0.01", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+plot3 = plot!(xAxisValues, theoreticSolutions[1,:], lc = :black, label = "Exact", lw = 3)
+
+
+probMovement = 0.01
+probProliferation = 0.01
+#Run simulation with proliferation
+averagedSimulationGrids = StochasticExclusionWalkAverageWithProliferationMultTimes([XLENGTH,YLENGTH], times, simGrid, numSimulations, probMovement, probProliferation)
+densities_y = map(x -> calculateDensities(x), averagedSimulationGrids) #Average results over the y direction
+#Solve the Fisher-Kolmogorov model numerically
+C0 = calculateDensities(simGrid) 
+numericSolutions = zeros(length(times),NUMBEROFSTEPS) 
+theoreticSolutions = PDESolver([STEPSIZE, NUMBEROFSTEPS, probMovement, probProliferation], C0, times, FisherKolmogorov!)
+#Plot together
+plot4 = scatter(xAxisValues, densities_y, xlabel = "x", ylabel = "N", title = "P_m = 1, P_p = 0.01", ylims = (0.0,1.0), size = (400,400), left_margin=1cm, right_margin=1cm, top_margin=1cm, bottom_margin = 0.5cm, label = "Stochastic")
+plot4 = plot!(xAxisValues, theoreticSolutions[1,:], lc = :black, label = "Exact", lw = 3)
+
+totalPlot = plot(plot1,plot2, plot3, plot4, layout = (1,4), size = (2000,500))
+display(totalPlot)
+
