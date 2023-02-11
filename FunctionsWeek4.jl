@@ -1,3 +1,5 @@
+
+#if one of the grids contain a cell at the specified coordinates, the index of that grid will be returned. Else the function will return 0.
 function CheckCellEmpty(coordinates, simGridsTemp3)
     for gridIndex in eachindex(simGridsTemp3)
         if(Int(simGridsTemp3[gridIndex][coordinates...]) == 1)
