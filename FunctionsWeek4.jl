@@ -9,11 +9,10 @@ function CheckCellEmpty(coordinates, simGridsTemp3)
 end#Function
 
 function moveAgentUpdate(simGridTemp5, intCoordinates, moveCoord)
-    println(simGridTemp5[(moveCoord)...])
+    
     simGridTemp5[(moveCoord)...]=1.0
-    # println("Before: ", sum(simGridTemp5[:,2]), "Move: ", moveCoord)
     simGridTemp5[intCoordinates...] = 0.0
-    # println("After: ", sum(simGridTemp5[:,2]),"Int: ", intCoordinates)
+    
     return simGridTemp5
 end#function
 
@@ -39,7 +38,7 @@ function attemptActionWithDirectionMultiPopulation(moveDirection, simGridsTemp2,
         #Check not moving to an occupied space
         if(CheckCellEmpty(moveCoord, simGridsTemp2)==0)
             
-            simGridsTemp2[actingIndex] =action(copy(simGridsTemp2[actingIndex]),intCoordinates,moveCoord)
+            simGridsTemp2[actingIndex] =action(simGridsTemp2[actingIndex],intCoordinates,moveCoord)
             
         end#if
     
@@ -51,7 +50,7 @@ function attemptActionWithDirectionMultiPopulation(moveDirection, simGridsTemp2,
             simGrid[(oppositeMoveCoord)...]=1.0
             simGrid[intCoordinates...] = 0.0
             =#
-            simGridsTemp2[actingIndex] = action(copy(simGridsTemp2[actingIndex]),intCoordinates,oppositeMoveCoord)
+            simGridsTemp2[actingIndex] = action(simGridsTemp2[actingIndex],intCoordinates,oppositeMoveCoord)
         end#if
     end#if elseif
     return simGridsTemp2
@@ -73,7 +72,16 @@ function StochasticExclusionWalkAverageMultTimesMultiplePopulations(lengths, tim
         for t in 0:maxTime
             
             count=0
-            
+            if(t in times)
+                
+                for i in eachindex(probMovements) #dumb way of getting number of populations
+                    # println("sumGrids, size = ", size(sumGrids),": ", typeof(sumGrids))
+                    # println("tempGrids, size = ", size(tempGrids),": ", typeof(tempGrids))
+
+                    sumGrids[i][findlast(time -> time==t, times)]+=tempGrids[i]
+                end
+            end#if
+
             #Move the agents
             while count < totalAgents #choose random cell to try to find an agent to move
                randCoordinates = []
@@ -81,7 +89,7 @@ function StochasticExclusionWalkAverageMultTimesMultiplePopulations(lengths, tim
                     append!(randCoordinates,rand(1:lengths[i]))
                end#for
 
-               #Check if the cell contains an agentc
+               #Check if the cell contains an agent
                occupiedIndex = CheckCellEmpty(randCoordinates, simGridsTemp)
                if(occupiedIndex != 0)
                 
@@ -99,15 +107,7 @@ function StochasticExclusionWalkAverageMultTimesMultiplePopulations(lengths, tim
                 end#if
             end#while
             
-            if(t in times)
-                
-                for i in eachindex(probMovements) #dumb way of getting number of populations
-                    # println("sumGrids, size = ", size(sumGrids),": ", typeof(sumGrids))
-                    # println("tempGrids, size = ", size(tempGrids),": ", typeof(tempGrids))
-
-                    sumGrids[i][findlast(time -> time==t, times)]+=tempGrids[i]
-                end
-            end#if
+            
 
         end#for
         
