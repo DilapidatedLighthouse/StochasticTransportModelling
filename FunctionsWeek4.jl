@@ -1,4 +1,4 @@
-
+#using Base.DeepCopy
 #if one of the grids contain a cell at the specified coordinates, the index of that grid will be returned. Else the function will return 0.
 function CheckCellEmpty(coordinates, simGridsTemp3)
     for gridIndex in eachindex(simGridsTemp3)
@@ -61,7 +61,10 @@ end#Function
 
 
 #Run simulation for two populations. Here we run each population on its own grid. The function just makes sense on all simgGrids. 
-function StochasticExclusionWalkAverageMultTimesMultiplePopulations(lengths, times, simGridsTemp, numSimultaions, probMovements, biases)
+function StochasticExclusionWalkAverageMultTimesMultiplePopulations(lengths, times, simGrids, numSimultaions, probMovements, biases)
+    
+    simGridsTemp = deepcopy(simGrids)
+
     totalAgents = sum(sum(simGridsTemp)) #We sum over each simGrid and then over all simgrids
     sumGrids = map(x -> fill(zeros(lengths...),length(times)), simGridsTemp)#The result of each simulation will be added to this variable so it can be averaged later
     maxTime = maximum(times)
@@ -69,7 +72,8 @@ function StochasticExclusionWalkAverageMultTimesMultiplePopulations(lengths, tim
     for sim in 1:numSimultaions
         println("Simulation: ",sim)#Print the current number of simulations
 
-        tempGrids = copy(simGridsTemp)
+        tempGrids = deepcopy(simGridsTemp)
+        display(heatmap(tempGrids[1]))
 
         for t in 0:maxTime
             
@@ -80,7 +84,7 @@ function StochasticExclusionWalkAverageMultTimesMultiplePopulations(lengths, tim
                     # println("sumGrids, size = ", size(sumGrids),": ", typeof(sumGrids))
                     # println("tempGrids, size = ", size(tempGrids),": ", typeof(tempGrids))
 
-                    sumGrids[i][findlast(time -> time==t, times)]+=tempGrids[i]
+                    sumGrids[i][findlast(time -> time==t, times)]+=deepcopy(tempGrids[i])
                 end
             end#if
 
@@ -92,7 +96,7 @@ function StochasticExclusionWalkAverageMultTimesMultiplePopulations(lengths, tim
                end#for
 
                #Check if the cell contains an agent
-               occupiedIndex = CheckCellEmpty(randCoordinates, simGridsTemp)
+               occupiedIndex = CheckCellEmpty(randCoordinates, tempGrids)
                if(occupiedIndex != 0)
                 
                     count+=1
@@ -110,9 +114,9 @@ function StochasticExclusionWalkAverageMultTimesMultiplePopulations(lengths, tim
             end#while
             
             
-
-        end#for
         
+        end#for
+        display(heatmap(tempGrids[1]))
         # #Sum the results of all simulations
         
         # sumGrid+=tempGrid
@@ -125,4 +129,29 @@ function StochasticExclusionWalkAverageMultTimesMultiplePopulations(lengths, tim
 
     return averageGrid
 
+end#function
+
+function diffusionTwoPopulations!(du,u,p,t)
+    dx,N,D1,D2=p
+    S = u[1,:] + u[2,:]
+    for i in 2:N-1
+        du[1,i]=D1*((1-S[i])*(u[1,i+1]-2*u[1,i]+u[1,i-1])/dx^2 + (u[1,i]*(S[i+1]-2*S[i]+S[i-1])/dx^2))
+        du[2,i]=D2*((1-S[i])*(u[2,i+1]-2*u[2,i]+u[2,i-1])/dx^2 + (u[2,i]*(S[i+1]-2*S[i]+S[i-1])/dx^2))
+    end#for
+    du[1,1]=0.0
+    du[1,N]=0.0
+    du[2,1]=0.0
+    du[2,N]=0.0
+end#function
+
+
+#Access these solutions with storageVariable[population, x-value, time].
+#L is the x-length, dx is the stepsize, N is the number of steps, t is an array of times to store the solution at
+#C0 is an array of arrays storing the intial conditions, D1 is the diffusivity for the 1st population, D2 is the diffusivity for the 2nd population
+function pdesolverWeek4(L,dx,N,T,C0,D1,D2)
+    p=(dx,N,D1,D2)
+    tspan=(0.0,maximum(T))
+    prob=ODEProblem(diffusionTwoPopulations!,C0,tspan,p)
+    sol=solve(prob,saveat=T);
+    return sol
 end#function
