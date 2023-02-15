@@ -73,7 +73,7 @@ function StochasticExclusionWalkAverageMultTimesMultiplePopulations(lengths, tim
         println("Simulation: ",sim)#Print the current number of simulations
 
         tempGrids = deepcopy(simGridsTemp)
-        display(heatmap(tempGrids[1]))
+        #display(heatmap(tempGrids[1]))
 
         for t in 0:maxTime
             
@@ -116,7 +116,7 @@ function StochasticExclusionWalkAverageMultTimesMultiplePopulations(lengths, tim
             
         
         end#for
-        display(heatmap(tempGrids[1]))
+        #display(heatmap(tempGrids[1]))
         # #Sum the results of all simulations
         
         # sumGrid+=tempGrid
