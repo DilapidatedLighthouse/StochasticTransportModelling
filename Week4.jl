@@ -14,10 +14,11 @@ STEPSIZE = 1
 NUMBEROFSTEPS = Int(XLENGTH/STEPSIZE)
 
 times = [0, 500, 1000, 1500]
+#times = [0,10,200,300]
 NUMBEROFSIMULATIONS = 10
 biases = 0 #not properly implemented
 
-probMovements = [1,0.5]
+probMovements = [0.8,0.8]
 
 
 #Set up initial conditions
@@ -46,15 +47,16 @@ function createBlock(center, width, height, simGrid, xAxisValues)
 end#function
 
 #   population 1
-H = 20
+H1 = 20
 simGrid1 = zeros(XLENGTH,YLENGTH)
-
-simGrid1 = createBlock(-100,2*H, YLENGTH, simGrid1,xAxisValues)
+center1 = -100
+simGrid1 = createBlock(center1,2*H1, YLENGTH, simGrid1,xAxisValues)
 #   population 2
-H = 20
+H2 = 20
+center2 = 0
 simGrid2 = zeros(XLENGTH,YLENGTH)
 
-simGrid2 = createBlock(0,2*H, YLENGTH, simGrid2,xAxisValues)
+simGrid2 = createBlock(center2,2*H2, YLENGTH, simGrid2,xAxisValues)
 
 #Had to make some name changes here and pass in copies because of some odd behaviour. Arrays were being changed when they shouldn't have been.
 simGridsMaster = [copy(simGrid1), copy(simGrid2)]
@@ -86,22 +88,54 @@ nSolutions = pdesolverWeek4(XLENGTH, STEPSIZE, NUMBEROFSTEPS, times, nInitialCon
 
 
 
-function prepareGraphNoLabel(timeIndex, times, probMovements)
+# function prepareGraphNoLabel(timeIndex, times, probMovements)
+    
+#     time = times[timeIndex]
+#     timeString = string(times[timeIndex])
+
+#     plot1 = scatter(xAxisValues, densities[1][timeIndex]+ densities[2][timeIndex],markerstrokewidth = 0, markershape = :rect, markersize = 4, legend = false)
+
+#     #Stochastic values
+#     for populationIndex in eachindex(probMovements)
+#         plot1 = scatter!(xAxisValues,  densities[populationIndex][timeIndex], markerstrokewidth = 0, markersize = 2.6, legend = false)
+#     end#for
+#     #Numeric Values
+#     for populationIndex in eachindex(probMovements)
+#         plot1 = plot!(xAxisValues,nSolutions[populationIndex, :, timeIndex], lw = 2.5, xlabel = "x", ylabel="Density", framestyle = :box, legend = false)
+#     end#for
+
+#     #plot1 = scatter!(xAxisValues, densities[1][timeIndex]+ densities[2][timeIndex],markerstrokewidth = 0, markershape = :rect, label="Stochastic total")
+#     plot1 = plot!(xAxisValues,  nSolutions[1, :, timeIndex] + nSolutions[2, :, timeIndex],xlabel = "x", title = string("t = ", time), lc = :black, ls=:dash, ylabel="Density", framestyle = :box, legend = false, xlims = (-XLENGTH/2, XLENGTH/2), ylims = (0,1) )
+
+#     return plot1
+
+# end#function
+
+
+# #plots for 
+# plot1 = prepareGraphNoLabel(1, times, probMovements)
+# plot2 = prepareGraphNoLabel(2, times, probMovements)
+# plot3 = prepareGraphNoLabel(3, times, probMovements)
+# plot4 = prepareGraphNoLabel(4, times, probMovements)
+
+# combinedPlot = plot(plot1,plot2,plot3,plot4, legend = false, xlims = (-XLENGTH/2, XLENGTH/2), ylims = (0,1) )
+# display(combinedPlot)
+
+
+
+#||||-----Special Conditions Graph----||||#
+
+
+function prepareGraphSpecial(timeIndex, times, probMovements)
     
     time = times[timeIndex]
     timeString = string(times[timeIndex])
+    
+    D = probMovements[1]/4
+    C(x)=0.5*(erf((H1-(x-center1))/sqrt(4*D*time))+erf((H1+(x-center1))/sqrt(4*D*time)) + erf((H2-(x-center2))/sqrt(4*D*time))+erf((H2+(x-center2))/sqrt(4*D*time)));
 
     plot1 = scatter(xAxisValues, densities[1][timeIndex]+ densities[2][timeIndex],markerstrokewidth = 0, markershape = :rect, markersize = 4, legend = false)
-
-    #Stochastic values
-    for populationIndex in eachindex(probMovements)
-        plot1 = scatter!(xAxisValues,  densities[populationIndex][timeIndex], markerstrokewidth = 0, markersize = 2.6, legend = false)
-    end#for
-    #Numeric Values
-    for populationIndex in eachindex(probMovements)
-        plot1 = plot!(xAxisValues,nSolutions[populationIndex, :, timeIndex], lw = 2.5, xlabel = "x", ylabel="Density", framestyle = :box, legend = false)
-    end#for
-
+    plot1=plot!(C, -XLENGTH/2:XLENGTH/2-1,lw=4,lc=:red,ls=:dash,label="Exact",xlabel="x",ylabel="C(x, 0)",xlims=(-XLENGTH/2,XLENGTH/2),ylims=(0,1),framestyle=:box)
     #plot1 = scatter!(xAxisValues, densities[1][timeIndex]+ densities[2][timeIndex],markerstrokewidth = 0, markershape = :rect, label="Stochastic total")
     plot1 = plot!(xAxisValues,  nSolutions[1, :, timeIndex] + nSolutions[2, :, timeIndex],xlabel = "x", title = string("t = ", time), lc = :black, ls=:dash, ylabel="Density", framestyle = :box, legend = false, xlims = (-XLENGTH/2, XLENGTH/2), ylims = (0,1) )
 
@@ -110,16 +144,13 @@ function prepareGraphNoLabel(timeIndex, times, probMovements)
 end#function
 
 
-#plots for 
-plot1 = prepareGraph(1, times, probMovements)
-plot2 = prepareGraph(2, times, probMovements)
-plot3 = prepareGraph(3, times, probMovements)
-plot4 = prepareGraph(4, times, probMovements)
+plot1 = prepareGraphSpecial(1, times, probMovements)
+plot2 = prepareGraphSpecial(2, times, probMovements)
+plot3 = prepareGraphSpecial(3, times, probMovements)
+plot4 = prepareGraphSpecial(4, times, probMovements)
 
 combinedPlot = plot(plot1,plot2,plot3,plot4, legend = false, xlims = (-XLENGTH/2, XLENGTH/2), ylims = (0,1) )
 display(combinedPlot)
-
-
 
 
 #display(prepareGraph(3,times, probMovements))

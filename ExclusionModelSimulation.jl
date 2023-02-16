@@ -11,17 +11,17 @@ gr() #A graphical thing? I need to look it up
 #||||----VARIABLES----||||#
 
 #Declaring variables for simulation
-XLENGTH = 500
+XLENGTH = 250
 YLENGTH = 100
-PROBABILTYOFMOVE = 1.0
-PROBABILTYOFPROLIFERATION = 1.0
-TIMEOFSIMULATION = 0
+PROBABILTYOFMOVE = 1
+#PROBABILTYOFPROLIFERATION = 1.0
+TIMEOFSIMULATION = 400
 NUMBEROFSIMULATIONS = 1
 
-BIAS = -0.125
+BIAS = 0
 
 #Constants for initial conditions
-H = 50
+H = 20
 
 #Constants for heat equation
 D = PROBABILTYOFMOVE/4
@@ -39,7 +39,7 @@ center=-150
 #simGrid = createBlockEven(center,2*H, YLENGTH, simGrid,xAxisValues)
 #Heat equation. Will have to be manually changed to match the initial conditions and simulation behaviour
 T=TIMEOFSIMULATION
-C(x)=0.25*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T)));
+C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T)));
 #C(x)= 0.5*(erf((H-(x-center))/sqrt(4*D*T))+erf((H+(x-center))/sqrt(4*D*T)));
 #C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T))) + 0.25*(erf((H-(x-center))/sqrt(4*D*T))+erf((H+(x-center))/sqrt(4*D*T)));
 
