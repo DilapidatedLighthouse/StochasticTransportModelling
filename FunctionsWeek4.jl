@@ -131,6 +131,8 @@ function StochasticExclusionWalkAverageMultTimesMultiplePopulations(lengths, tim
 
 end#function
 
+
+#PDE problem for numeric solution. Finite difference scheme is applied for x derivatives.
 function diffusionTwoPopulations!(du,u,p,t)
     dx,N,D1,D2=p
     S = u[1,:] + u[2,:]
@@ -154,4 +156,27 @@ function pdesolverWeek4(L,dx,N,T,C0,D1,D2)
     prob=ODEProblem(diffusionTwoPopulations!,C0,tspan,p)
     sol=solve(prob,saveat=T);
     return sol
+end#function
+
+function prepareGraph(timeIndex, times, probMovements)
+    
+    time = times[timeIndex]
+    timeString = string(times[timeIndex])
+
+    plot1 = scatter(xAxisValues, densities[1][timeIndex]+ densities[2][timeIndex],markerstrokewidth = 0, markershape = :rect, markersize = 4, label="Stochastic total")
+
+    #Stochastic values
+    for populationIndex in eachindex(probMovements)
+        plot1 = scatter!(xAxisValues,  densities[populationIndex][timeIndex], markerstrokewidth = 0, markersize = 2.6, label=string("Stochastic ", populationIndex))
+    end#for
+    #Numeric Values
+    for populationIndex in eachindex(probMovements)
+        plot1 = plot!(xAxisValues,nSolutions[populationIndex, :, timeIndex], lw = 2.5, xlabel = "x", ylabel="Density", framestyle = :box, label=string("Numeric ", populationIndex))
+    end#for
+
+    #plot1 = scatter!(xAxisValues, densities[1][timeIndex]+ densities[2][timeIndex],markerstrokewidth = 0, markershape = :rect, label="Stochastic total")
+    plot1 = plot!(xAxisValues,  nSolutions[1, :, timeIndex] + nSolutions[2, :, timeIndex],xlabel = "x", title = string("t = ", time), lc = :black, ls=:dash, ylabel="Density", framestyle = :box, label=string("Numeric total"))
+
+    return plot1
+
 end#function

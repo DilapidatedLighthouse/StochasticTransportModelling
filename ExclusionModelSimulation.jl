@@ -1,7 +1,3 @@
-#TO DO:
-#   *Add option for bias to movement
-
-
 using Plots, SpecialFunctions, Random
 include("functions.jl")
 gr() #A graphical thing? I need to look it up
@@ -46,7 +42,10 @@ C(x)=0.5*(erf((H-x)/sqrt(4*D*T))+erf((H+x)/sqrt(4*D*T)));
 #Calculate average densities as function of space.
 densities = calculateDensities(StochasticExclusionWalkAverage([XLENGTH, YLENGTH], TIMEOFSIMULATION, simGrid, NUMBEROFSIMULATIONS, PROBABILTYOFMOVE, BIAS))
 println("Calculations Completed")
+
+
 #||||----PLOTS----||||#
+
 myPlot = scatter(xAxisValues,densities,mc=:black,msc=:match,label="Stochastic")
 myPlot=plot!(C, -XLENGTH/2:XLENGTH/2-1,lw=4,lc=:green,ls=:dash,label="Exact",xlabel="x",ylabel="C(x, 0)",xlims=(-XLENGTH/2,XLENGTH/2),ylims=(0,1),framestyle=:box)
 display(myPlot)
