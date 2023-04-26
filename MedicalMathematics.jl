@@ -7,17 +7,17 @@ include("functions.jl")
 XLENGTH = 20 #Width of grid
 YLENGTH = 20 #Height of grid
 lengths = [XLENGTH, YLENGTH]
-initialDensity = 0.5 #Density of 
+initialDensity = 1 #Density of 
 
-numSimulations = 2
+numSimulations = 10
 probMovement = 1
 probProliferation = 1
 BIAS = 0
-probDeath = 0.7
+probDeath = 0.2
 
-foodDensity = 0.8
+foodDensity = 0.5
 
-MAXTIME = 100
+MAXTIME = 200
 
 STEPSIZE = 1
 NUMBEROFSTEPS = Int(XLENGTH/STEPSIZE)+1
@@ -29,7 +29,7 @@ NUMBEROFSTEPS = Int(XLENGTH/STEPSIZE)+1
 #(modelling a restricted availability of food) and each cell also has a certain probability of dying each time
 function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimulations, probMovement, probProliferation, initialDensity, probDeath, foodDensity)
     
-    sumGrids = fill(zeros(lengths...),1:MAXTIME) #The result of each simulation will be added to this variable so it can be averaged later
+    sumGrids = fill(zeros(lengths...),1:MAXTIME+1) #The result of each simulation will be added to this variable so it can be averaged later
     maxTime = MAXTIME #Remnant of the code I changed to make this
 
 
@@ -50,17 +50,17 @@ function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimu
             end#if
         end#for
         totalAgents = sum(simGrid)
-
+        
 
         println("Simulation: ",sim)#Print the current number of simulations
 
         tempGrid = copy(simGrid)
-
+        sumGrids[1] += tempGrid
         for t in 1:maxTime
             
             local count = 0
             
-            println("Moving:")
+           
 
             #Move the agents
             while count < totalAgents #choose random cell to try to find an agent to move
@@ -83,8 +83,6 @@ function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimu
                 end#if
             end#while
             
-            println("Proliferating")
-            println(totalAgents)
 
             #proliferate
             tempTotalAgents = totalAgents
@@ -113,11 +111,11 @@ function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimu
                  count += 1
              end#while
              totalAgents = sum(tempGrid)#this needs to change since a cell wont always proliferate
-             println(totalAgents)
+             
 
 
 
-             println("Dying")
+             
              count=0
              #death
              while count < totalAgents #choose random cell to try to find an agent to move
@@ -140,9 +138,9 @@ function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimu
                  
              end#while
             totalAgents = sum(tempGrid)
-            println(totalAgents)
+          
             
-            sumGrids[t] +=tempGrid
+            sumGrids[t+1] +=tempGrid
         end#for
     end#for
     
@@ -179,4 +177,4 @@ end#function
 #||||----Calculations----||||#
 simGrids = ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimulations, probMovement, probProliferation, initialDensity, probDeath, foodDensity)
 densities = calculateFullDensities(simGrids)
-plot(densities)
+plot(densities,lw=2,xlims=(0,MAXTIME),ylims=(0,1), ylabel="C(t)",legend=false)
