@@ -9,15 +9,15 @@ YLENGTH = 20 #Height of grid
 lengths = [XLENGTH, YLENGTH]
 initialDensity = 0.5 #Density of 
 
-numSimulations = 1
+numSimulations = 2
 probMovement = 1
 probProliferation = 1
 BIAS = 0
-probDeath = 0.4
+probDeath = 0.7
 
-foodDensity = 0.2
+foodDensity = 0.8
 
-MAXTIME = 50
+MAXTIME = 100
 
 STEPSIZE = 1
 NUMBEROFSTEPS = Int(XLENGTH/STEPSIZE)+1
@@ -31,6 +31,8 @@ function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimu
     
     sumGrids = fill(zeros(lengths...),1:MAXTIME) #The result of each simulation will be added to this variable so it can be averaged later
     maxTime = MAXTIME #Remnant of the code I changed to make this
+
+
 
     for sim in 1:numSimulations
         simGrid = zeros(lengths...)
@@ -57,7 +59,9 @@ function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimu
         for t in 1:maxTime
             
             local count = 0
-            println("Moving...")
+            
+            println("Moving:")
+
             #Move the agents
             while count < totalAgents #choose random cell to try to find an agent to move
                randCoordinates = []
@@ -78,7 +82,10 @@ function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimu
                     end#if
                 end#if
             end#while
+            
             println("Proliferating")
+            println(totalAgents)
+
             #proliferate
             tempTotalAgents = totalAgents
             count = 0
@@ -91,7 +98,7 @@ function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimu
                 #Check if the cell contains an agent
                 if(tempGrid[randCoordinates...]==1)
                      
-                     tempTotalAgents += 1
+                     
                      #Does it proliferate?
                      proliferateQuery = rand(1)[1]
                      if(proliferateQuery <= probProliferation)
@@ -100,13 +107,17 @@ function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimu
                      
                          #Proliferate
                          tempGrid = attemptActionWithDirection(moveDirection,tempGrid,randCoordinates, proliferate)
+                         tempTotalAgents += 1
                      end#if
                  end#if
                  count += 1
              end#while
              totalAgents = tempTotalAgents
-             println("Dying")
              println(totalAgents)
+
+
+
+             println("Dying")
              count=0
              #death
              while count < totalAgents #choose random cell to try to find an agent to move
@@ -118,18 +129,18 @@ function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimu
                 #Check if the cell contains an agent
                 if(tempGrid[randCoordinates...]==1)
                     count += 1
-                     tempTotalAgents -= 1
+                     
                      #Does it die?
                      deathQuery = rand(1)[1]
                      if(deathQuery <= probDeath)
                          tempGrid[randCoordinates...] = 0;
+                         tempTotalAgents -= 1
                      end#if
                  end#if
                  
              end#while
             totalAgents = tempTotalAgents
-            println("Restarting")
-
+            println(totalAgents)
             
             sumGrids[t] +=tempGrid
         end#for
@@ -158,8 +169,11 @@ function calculateFullDensities(simGrid)
 
     #Average number of agents along each vertical line on the grid, across all simulations
     averageDensity = density/(size(simGrid[1])[1]*size(simGrid[1])[2])
+
     return averageDensity
 end#function
+
+
 
 
 #||||----Calculations----||||#
