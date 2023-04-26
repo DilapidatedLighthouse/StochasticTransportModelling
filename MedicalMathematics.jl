@@ -107,12 +107,12 @@ function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimu
                      
                          #Proliferate
                          tempGrid = attemptActionWithDirection(moveDirection,tempGrid,randCoordinates, proliferate)
-                         tempTotalAgents += 1
+                         tempTotalAgents += 1 #This is a problem
                      end#if
                  end#if
                  count += 1
              end#while
-             totalAgents = tempTotalAgents
+             totalAgents = tempTotalAgents #this needs to change since a cell wont always proliferate
              println(totalAgents)
 
 
