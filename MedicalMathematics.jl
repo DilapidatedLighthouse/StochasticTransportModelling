@@ -112,7 +112,7 @@ function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimu
                  end#if
                  count += 1
              end#while
-             totalAgents = tempTotalAgents #this needs to change since a cell wont always proliferate
+             totalAgents = sum(tempGrid)#this needs to change since a cell wont always proliferate
              println(totalAgents)
 
 
@@ -139,7 +139,7 @@ function ResourceAndSpaceLimitedProliferationWithDeath(lengths, MAXTIME, numSimu
                  end#if
                  
              end#while
-            totalAgents = tempTotalAgents
+            totalAgents = sum(tempGrid)
             println(totalAgents)
             
             sumGrids[t] +=tempGrid
